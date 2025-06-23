@@ -1,23 +1,24 @@
-# Use Node.js base image with Debian
-FROM node:18-bullseye
+# Используем официальный образ Node.js
+FROM node:18
 
-# Install Python and pip
-RUN apt-get update && apt-get install -y python3 python3-pip
-
-# Set working directory
+# Создаем рабочую директорию
 WORKDIR /app
 
-# Copy everything
-COPY . .
+# Копируем package*.json
+COPY package*.json ./
 
-# Install Node.js dependencies
+# Устанавливаем зависимости
 RUN npm install
 
-# Install Python dependencies if requirements.txt exists
-RUN [ -f requirements.txt ] && pip3 install -r requirements.txt || true
+# Копируем всё остальное
+COPY . .
 
-# Build Next.js project
+# Собираем проект
 RUN npm run build
 
-# Default command
+# Говорим, что приложение слушает этот порт
+ENV PORT=3000
+EXPOSE 3000
+
+# Запускаем
 CMD ["npm", "start"]
